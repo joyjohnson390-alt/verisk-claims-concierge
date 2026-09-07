@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Verisk Claims Concierge AI</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background: #0f1117;
+      color: #e2e8f0;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── Header ── */
+    header {
+      background: #1a1f2e;
+      border-bottom: 1px solid #2d3748;
+      padding: 12px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-mark {
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      width: 36px; height: 36px;
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 700; font-size: 14px; color: white;
+    }
+    .logo-text h1 { font-size: 16px; font-weight: 600; color: #f1f5f9; }
+    .logo-text p  { font-size: 11px; color: #64748b; margin-top: 1px; }
+
+    .header-right {
+      display: flex; align-items: center; gap: 16px;
+    }
+    .api-indicator {
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; color: #94a3b8;
+    }
+    .dot {
+      width: 8px; height: 8px; border-radius: 50%;
+      transition: background 0.3s;
+    }
+    .dot.up   { background: #22c55e; box-shadow: 0 0 6px #22c55e; }
+    .dot.down { background: #ef4444; box-shadow: 0 0 6px #ef4444; }
+
+    /* ── Layout ── */
+    .main {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ── Sidebar ── */
+    aside {
+      width: 260px;
+      background: #141820;
+      border-right: 1px solid #1e2535;
+      display: flex;
+      flex-direction: column;
+      padding: 16px;
+      gap: 20px;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+    .section-label {
+      font-size: 10px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #475569;
+      margin-bottom: 8px;
+    }
+
+    /* Persona buttons */
+    .persona-btn {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #2d3748;
+      background: #1a1f2e;
+      color: #94a3b8;
+      cursor: pointer;
+      text-align: left;
+      font-size: 13px;
+      transition: all 0.15s;
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 6px;
+    }
+    .persona-btn:hover { border-color: #3b82f6; color: #e2e8f0; }
+    .persona-btn.active { border-color: transparent; color: white; }
+    .persona-btn.active.claimant  { background: linear-gradient(135deg, #1e3a5f, #1e40af33); border-color: #3b82f6; }
+    .persona-btn.active.contractor { background: linear-gradient(135deg, #3d2a00, #b45309aa); border-color: #f59e0b; }
+    .persona-btn.active.adjuster  { background: linear-gradient(135deg, #2d1a4a, #7c3aed55); border-color: #8b5cf6; }
+    .persona-icon { font-size: 16px; }
+    .persona-info { display: flex; flex-direction: column; }
+    .persona-name { font-size: 13px; font-weight: 500; }
+    .persona-id   { font-size: 10px; opacity: 0.6; margin-top: 1px; }
+
+    /* Demo buttons */
+    .demo-btn {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #2d3748;
+      background: #1a1f2e;
+      color: #94a3b8;
+      cursor: pointer;
+      text-align: left;
+      font-size: 12px;
+      transition: all 0.15s;
+      margin-bottom: 6px;
+      line-height: 1.4;
+    }
+    .demo-btn:hover { border-color: #6366f1; color: #e2e8f0; background: #1e2535; }
+    .demo-btn-label { font-weight: 600; font-size: 11px; color: #6366f1; margin-bottom: 2px; }
+
+    /* Weather toggle */
+    .weather-toggle {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #2d3748;
+      background: #1a1f2e;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 500;
+      transition: all 0.15s;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .weather-toggle.kill  { border-color: #ef4444; color: #fca5a5; }
+    .weather-toggle.kill:hover  { background: #2d1a1a; }
+    .weather-toggle.restore { border-color: #22c55e; color: #86efac; }
+    .weather-toggle.restore:hover { background: #0f2d1a; }
+
+    .clear-btn {
+      width: 100%;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #2d3748;
+      background: transparent;
+      color: #475569;
+      cursor: pointer;
+      font-size: 12px;
+      transition: all 0.15s;
+    }
+    .clear-btn:hover { border-color: #475569; color: #94a3b8; }
+
+    /* ── Chat area ── */
+    .chat-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .messages {
+      flex: 1;
+      overflow-y: auto;
+      padding: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    /* Empty state */
+    .empty-state {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #334155;
+      gap: 8px;
+      text-align: center;
+    }
+    .empty-state .big-icon { font-size: 48px; margin-bottom: 8px; }
+    .empty-state h2 { font-size: 18px; color: #475569; }
+    .empty-state p  { font-size: 13px; max-width: 300px; line-height: 1.5; }
+
+    /* Message bubbles */
+    .message { max-width: 75%; display: flex; flex-direction: column; gap: 4px; }
+    .message.user { align-self: flex-end; }
+    .message.ai   { align-self: flex-start; }
+
+    .bubble {
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .message.user .bubble {
+      background: #1e3a5f;
+      border: 1px solid #3b82f640;
+      color: #bfdbfe;
+      border-bottom-right-radius: 4px;
+    }
+    .message.user.contractor .bubble {
+      background: #3d2a00;
+      border-color: #f59e0b40;
+      color: #fde68a;
+    }
+    .message.user.adjuster .bubble {
+      background: #2d1a4a;
+      border-color: #8b5cf640;
+      color: #ddd6fe;
+    }
+    .message.ai .bubble {
+      background: #1a1f2e;
+      border: 1px solid #2d3748;
+      color: #e2e8f0;
+      border-bottom-left-radius: 4px;
+    }
+
+    .message-meta {
+      font-size: 11px;
+      color: #475569;
+      padding: 0 4px;
+    }
+    .message.user .message-meta { text-align: right; }
+
+    .sources {
+      font-size: 11px;
+      color: #475569;
+      padding: 0 4px;
+      display: flex; gap: 6px; flex-wrap: wrap;
+    }
+    .source-tag {
+      background: #1e2535;
+      border: 1px solid #2d3748;
+      padding: 2px 8px;
+      border-radius: 10px;
+      color: #64748b;
+    }
+
+    /* Confirmation banner */
+    .confirm-banner {
+      background: #1c2030;
+      border: 1px solid #f59e0b55;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: #fbbf24;
+      display: flex; align-items: center; gap: 8px;
+      margin: 0 24px;
+      flex-shrink: 0;
+    }
+    .confirm-banner.hidden { display: none; }
+
+    /* Thinking indicator */
+    .thinking {
+      display: flex; align-items: center; gap: 8px;
+      font-size: 13px; color: #475569;
+      padding: 8px 0;
+    }
+    .dots span {
+      display: inline-block;
+      width: 6px; height: 6px;
+      background: #475569;
+      border-radius: 50%;
+      animation: bounce 1.2s infinite;
+    }
+    .dots span:nth-child(2) { animation-delay: 0.2s; }
+    .dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce {
+      0%, 60%, 100% { transform: translateY(0); }
+      30% { transform: translateY(-6px); }
+    }
+
+    /* Degradation warning */
+    .degraded-warning {
+      background: #2d1a1a;
+      border: 1px solid #ef444455;
+      border-radius: 8px;
+      padding: 8px 14px;
+      font-size: 12px;
+      color: #fca5a5;
+      margin: 0 24px 8px;
+      flex-shrink: 0;
+    }
+    .degraded-warning.hidden { display: none; }
+
+    /* Input area */
+    .input-area {
+      padding: 16px 24px;
+      border-top: 1px solid #1e2535;
+      display: flex;
+      gap: 10px;
+      background: #0f1117;
+      flex-shrink: 0;
+    }
+    textarea {
+      flex: 1;
+      background: #1a1f2e;
+      border: 1px solid #2d3748;
+      border-radius: 10px;
+      color: #e2e8f0;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-family: inherit;
+      resize: none;
+      outline: none;
+      transition: border-color 0.15s;
+      min-height: 44px;
+      max-height: 120px;
+    }
+    textarea:focus { border-color: #3b82f6; }
+    textarea::placeholder { color: #334155; }
+
+    .send-btn {
+      background: #2563eb;
+      border: none;
+      border-radius: 10px;
+      color: white;
+      padding: 0 18px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.15s;
+      white-space: nowrap;
+    }
+    .send-btn:hover { background: #1d4ed8; }
+    .send-btn:disabled { background: #1e2535; color: #334155; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <div class="logo">
+    <div class="logo-mark">V</div>
+    <div class="logo-text">
+      <h1>Verisk Property Estimating Network</h1>
+      <p>Claims Concierge AI &nbsp;·&nbsp; Technical Architecture Demo</p>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="api-indicator">
+      <div class="dot up" id="weatherDot"></div>
+      <span id="weatherLabel">Weather API: UP</span>
+    </div>
+  </div>
+</header>
+
+<div class="main">
+
+  <!-- Sidebar -->
+  <aside>
+
+    <div>
+      <div class="section-label">Persona</div>
+      <button class="persona-btn claimant active" onclick="switchPersona('claimant','CLM-001')">
+        <span class="persona-icon">👤</span>
+        <div class="persona-info">
+          <span class="persona-name">Robert Chen</span>
+          <span class="persona-id">Claimant · CLM-001</span>
+        </div>
+      </button>
+      <button class="persona-btn contractor" onclick="switchPersona('contractor','CON-001')">
+        <span class="persona-icon">🔧</span>
+        <div class="persona-info">
+          <span class="persona-name">Jake Morales</span>
+          <span class="persona-id">Contractor · CON-001</span>
+        </div>
+      </button>
+      <button class="persona-btn adjuster" onclick="switchPersona('adjuster','ADJ-001')">
+        <span class="persona-icon">📋</span>
+        <div class="persona-info">
+          <span class="persona-name">Maria Santos</span>
+          <span class="persona-id">Adjuster · ADJ-001</span>
+        </div>
+      </button>
+    </div>
+
+    <div>
+      <div class="section-label">Demo Scenarios</div>
+      <button class="demo-btn" onclick="runDemo(1)">
+        <div class="demo-btn-label">Demo 1 — Claimant</div>
+        Check claim status, damage assessment &amp; linked weather event
+      </button>
+      <button class="demo-btn" onclick="runDemo(2)">
+        <div class="demo-btn-label">Demo 2 — Contractor</div>
+        Submit work order progress update
+      </button>
+      <button class="demo-btn" onclick="runDemo(3)">
+        <div class="demo-btn-label">Demo 3 — Adjuster</div>
+        Review full book of claims
+      </button>
+    </div>
+
+    <div>
+      <div class="section-label">Weather API Control</div>
+      <button class="weather-toggle kill" id="weatherToggleBtn" onclick="toggleWeather()">
+        <span>⚡ Kill Weather API</span>
+        <span>simulate outage</span>
+      </button>
+    </div>
+
+    <div>
+      <button class="clear-btn" onclick="clearChat()">Clear conversation</button>
+    </div>
+
+  </aside>
+
+  <!-- Chat -->
+  <div class="chat-area">
+
+    <div class="messages" id="messages">
+      <div class="empty-state" id="emptyState">
+        <div class="big-icon">🏠</div>
+        <h2>Claims Concierge AI</h2>
+        <p>Select a demo scenario from the sidebar, or type a message to begin.</p>
+      </div>
+    </div>
+
+    <div class="confirm-banner hidden" id="confirmBanner">
+      ⚠️ A write action is pending — reply <strong>"yes"</strong> to confirm or <strong>"no"</strong> to cancel.
+    </div>
+
+    <div class="degraded-warning hidden" id="degradedWarning">
+      🔴 Weather API is offline — the agent will not fabricate weather data.
+    </div>
+
+    <div class="input-area">
+      <textarea
+        id="userInput"
+        rows="1"
+        placeholder="Ask about a claim, submit an update, or type a question…"
+        onkeydown="handleKey(event)"
+        oninput="autoResize(this)"
+      ></textarea>
+      <button class="send-btn" id="sendBtn" onclick="sendMessage()">Send</button>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  let currentPersona  = 'claimant';
+  let weatherEnabled  = true;
+  let isThinking      = false;
+
+  // ── Boot ────────────────────────────────────────────────────
+  window.addEventListener('DOMContentLoaded', () => {
+    pollWeatherStatus();
+    setInterval(pollWeatherStatus, 5000);
+  });
+
+  // ── Weather status ───────────────────────────────────────────
+  async function pollWeatherStatus() {
+    try {
+      const r = await fetch('/api/weather/status');
+      const d = await r.json();
+      setWeatherUI(d.enabled);
+    } catch { setWeatherUI(false); }
+  }
+
+  function setWeatherUI(enabled) {
+    weatherEnabled = enabled;
+    const dot   = document.getElementById('weatherDot');
+    const label = document.getElementById('weatherLabel');
+    const btn   = document.getElementById('weatherToggleBtn');
+    const warn  = document.getElementById('degradedWarning');
+
+    dot.className   = 'dot ' + (enabled ? 'up' : 'down');
+    label.textContent = enabled ? 'Weather API: UP' : 'Weather API: DOWN';
+    btn.className   = 'weather-toggle ' + (enabled ? 'kill' : 'restore');
+    btn.innerHTML   = enabled
+      ? '<span>⚡ Kill Weather API</span><span>simulate outage</span>'
+      : '<span>✅ Restore Weather API</span><span>bring back online</span>';
+
+    if (!enabled) warn.classList.remove('hidden');
+    else          warn.classList.add('hidden');
+  }
+
+  async function toggleWeather() {
+    try {
+      const r = await fetch('/api/weather/toggle', { method: 'POST' });
+      const d = await r.json();
+      setWeatherUI(d.enabled);
+    } catch (e) { alert('Could not reach weather API: ' + e); }
+  }
+
+  // ── Persona ──────────────────────────────────────────────────
+  async function switchPersona(persona, userId) {
+    const r = await fetch('/api/persona', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({ persona, user_id: userId })
+    });
+    const d = await r.json();
+    currentPersona = persona;
+    document.querySelectorAll('.persona-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`.persona-btn.${persona}`).classList.add('active');
+    clearMessages();
+    appendSystemNote(`Switched to ${d.name} (${d.user_id}) — ${persona}`);
+  }
+
+  // ── Send message ─────────────────────────────────────────────
+  async function sendMessage(text) {
+    const input = document.getElementById('userInput');
+    const message = text || input.value.trim();
+    if (!message || isThinking) return;
+
+    input.value = '';
+    autoResize(input);
+    hideEmptyState();
+
+    appendUserMessage(message);
+    showThinking();
+    setInputEnabled(false);
+
+    try {
+      const r = await fetch('/api/chat', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({ message })
+      });
+      if (!r.ok) {
+        const text = await r.text();
+        let detail = text;
+        try { detail = JSON.parse(text).detail || text; } catch {}
+        hideThinking();
+        appendError(`Error (${r.status}): ${detail}`);
+        setInputEnabled(true);
+        return;
+      }
+      const d = await r.json();
+      hideThinking();
+      appendAIMessage(d.reply, d.sources, d.weather_available);
+
+      const banner = document.getElementById('confirmBanner');
+      if (d.awaiting_confirmation) banner.classList.remove('hidden');
+      else                         banner.classList.add('hidden');
+
+    } catch (e) {
+      hideThinking();
+      appendError('Request failed: ' + e.message);
+    }
+
+    setInputEnabled(true);
+    document.getElementById('userInput').focus();
+  }
+
+  // ── Demo scenarios ───────────────────────────────────────────
+  async function runDemo(n) {
+    if (isThinking) return;
+    hideEmptyState();
+    showThinking();
+    setInputEnabled(false);
+
+    try {
+      const r = await fetch(`/api/demo/${n}`);
+      if (!r.ok) {
+        const text = await r.text();
+        let detail = text;
+        try { detail = JSON.parse(text).detail || text; } catch {}
+        hideThinking();
+        appendError(`Demo ${n} failed (${r.status}): ${detail}`);
+        setInputEnabled(true);
+        return;
+      }
+      const d = await r.json();
+      hideThinking();
+
+      // Update persona UI
+      currentPersona = d.persona;
+      document.querySelectorAll('.persona-btn').forEach(b => b.classList.remove('active'));
+      document.querySelector(`.persona-btn.${d.persona}`).classList.add('active');
+      clearMessages();
+
+      appendSystemNote(`Demo ${n} — ${d.persona_name} (${d.user_id})`);
+      appendUserMessage(d.sent_message);
+      appendAIMessage(d.reply, d.sources, d.weather_available);
+
+      const banner = document.getElementById('confirmBanner');
+      if (d.awaiting_confirmation) banner.classList.remove('hidden');
+      else                         banner.classList.add('hidden');
+
+    } catch (e) {
+      hideThinking();
+      appendError('Demo failed: ' + e.message);
+    }
+
+    setInputEnabled(true);
+  }
+
+  // ── Clear ────────────────────────────────────────────────────
+  async function clearChat() {
+    await fetch('/api/clear', { method: 'POST' });
+    clearMessages();
+    document.getElementById('confirmBanner').classList.add('hidden');
+  }
+
+  function clearMessages() {
+    const msgs = document.getElementById('messages');
+    msgs.innerHTML = '';
+    showEmptyState();
+  }
+
+  // ── DOM helpers ──────────────────────────────────────────────
+  function appendUserMessage(text) {
+    const msgs = document.getElementById('messages');
+    const div = document.createElement('div');
+    div.className = `message user ${currentPersona}`;
+    div.innerHTML = `
+      <div class="bubble">${escHtml(text)}</div>
+      <div class="message-meta">${personaLabel()}</div>
+    `;
+    msgs.appendChild(div);
+    scrollBottom();
+  }
+
+  function appendAIMessage(text, sources, weatherOk) {
+    const msgs = document.getElementById('messages');
+    const div = document.createElement('div');
+    div.className = 'message ai';
+
+    let sourcesHtml = '';
+    if (sources && sources.length) {
+      sourcesHtml = '<div class="sources">' +
+        sources.map(s => `<span class="source-tag">${escHtml(s)}</span>`).join('') +
+        '</div>';
+    }
+
+    div.innerHTML = `
+      <div class="bubble">${escHtml(text)}</div>
+      ${sourcesHtml}
+      <div class="message-meta">Claims Concierge AI</div>
+    `;
+    msgs.appendChild(div);
+    scrollBottom();
+  }
+
+  function appendError(text) {
+    const msgs = document.getElementById('messages');
+    const div = document.createElement('div');
+    div.className = 'message ai';
+    div.innerHTML = `<div class="bubble" style="border-color:#ef444455;color:#fca5a5;">⚠️ ${escHtml(text)}</div>`;
+    msgs.appendChild(div);
+    scrollBottom();
+  }
+
+  function appendSystemNote(text) {
+    const msgs = document.getElementById('messages');
+    const div = document.createElement('div');
+    div.style.cssText = 'text-align:center;font-size:11px;color:#334155;padding:4px 0;';
+    div.textContent = text;
+    msgs.appendChild(div);
+    scrollBottom();
+  }
+
+  let thinkingEl = null;
+  function showThinking() {
+    isThinking = true;
+    const msgs = document.getElementById('messages');
+    thinkingEl = document.createElement('div');
+    thinkingEl.className = 'message ai';
+    thinkingEl.innerHTML = `
+      <div class="thinking">
+        <div class="dots"><span></span><span></span><span></span></div>
+        <span>Thinking…</span>
+      </div>`;
+    msgs.appendChild(thinkingEl);
+    scrollBottom();
+  }
+
+  function hideThinking() {
+    isThinking = false;
+    if (thinkingEl) { thinkingEl.remove(); thinkingEl = null; }
+  }
+
+  function setInputEnabled(enabled) {
+    document.getElementById('userInput').disabled = !enabled;
+    document.getElementById('sendBtn').disabled   = !enabled;
+  }
+
+  function hideEmptyState() {
+    const e = document.getElementById('emptyState');
+    if (e) e.remove();
+  }
+
+  function showEmptyState() {
+    const msgs = document.getElementById('messages');
+    const div = document.createElement('div');
+    div.id = 'emptyState';
+    div.className = 'empty-state';
+    div.innerHTML = `
+      <div class="big-icon">🏠</div>
+      <h2>Claims Concierge AI</h2>
+      <p>Select a demo scenario from the sidebar, or type a message to begin.</p>
+    `;
+    msgs.appendChild(div);
+  }
+
+  function scrollBottom() {
+    const msgs = document.getElementById('messages');
+    msgs.scrollTop = msgs.scrollHeight;
+  }
+
+  function handleKey(e) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage();
+    }
+  }
+
+  function autoResize(el) {
+    el.style.height = 'auto';
+    el.style.height = Math.min(el.scrollHeight, 120) + 'px';
+  }
+
+  function personaLabel() {
+    const map = {
+      claimant:   'Robert Chen · Claimant',
+      contractor: 'Jake Morales · Contractor',
+      adjuster:   'Maria Santos · Adjuster',
+    };
+    return map[currentPersona] || currentPersona;
+  }
+
+  function escHtml(s) {
+    return String(s)
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;');
+  }
+</script>
+</body>
+</html>

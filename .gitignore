@@ -1,0 +1,20 @@
+# Environment — NEVER commit secrets
+.env
+
+# Runtime artifacts
+verisk.db
+chroma_db/
+__pycache__/
+*.py[cod]
+*.pyo
+.DS_Store
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp

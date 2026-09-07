@@ -1,0 +1,49 @@
+VERISK PROPERTY ESTIMATING NETWORK — ADJUSTER HANDBOOK
+
+CLAIM ASSIGNMENT AND SLAs
+
+Claims are automatically routed to adjusters by region. SLA targets:
+- Initial contact with claimant: within 24 hours of claim submission
+- On-site inspection (if required): within 72 hours for catastrophic events, 5 business days standard
+- Work order issuance: within 5 business days of completing inspection
+
+WEATHER DATA INTEGRATION
+
+The Verisk PEN integrates with external weather/property-loss data feeds (NOAA-style). When reviewing a claim, the system automatically queries:
+- Recorded severe weather events at the claim location and date
+- Storm intensity data (wind speed, hail size, precipitation)
+- Property loss index for the area and event
+
+This data is used to validate that the reported loss is consistent with weather event data. Adjusters should note in claim records if weather data was unavailable or contradicts the reported loss.
+
+CONTRACTOR SELECTION
+
+When creating a work order:
+1. Review available licensed contractors in your region.
+2. Verify contractor ratings and recent performance metrics.
+3. Confirm contractor has appropriate license for the repair type (roofing, structural, electrical, etc.).
+4. Assign contractor and issue work order through the portal.
+
+HUMAN REVIEW REQUIREMENTS
+
+The following actions require explicit adjuster confirmation:
+- Work orders above $50,000 (require Senior Adjuster co-approval)
+- Invoice approvals for work exceeding original estimate by more than 15%
+- Scope change approvals
+- Claim closures
+
+AI-ASSISTED CLAIM REVIEW
+
+The Verisk Claims Concierge AI can assist adjusters with:
+- Surfacing relevant claim, contractor, and weather data in one view
+- Drafting work order descriptions based on claim details
+- Flagging claims where weather data doesn't match reported damage
+
+All AI-drafted work orders must be reviewed and confirmed by the adjuster before being sent to a contractor. The AI will never autonomously dispatch a work order.
+
+DATA SOURCES AND SOURCE OF TRUTH
+
+- Claim status: Verisk PEN (legacy PES) is system of record
+- Estimate amounts: AccuLynx is system of record for estimates
+- Weather/loss data: External weather data feed (NOAA-style) — federated, not stored
+- Identity (contractor): If PES and AccuLynx have conflicting contractor information, PES data takes precedence for identity resolution; AccuLynx data takes precedence for estimate values

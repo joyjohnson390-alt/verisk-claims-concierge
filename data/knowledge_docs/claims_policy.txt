@@ -1,0 +1,49 @@
+VERISK PROPERTY ESTIMATING NETWORK — CLAIMS POLICY GUIDE
+
+CLAIM STATUS DEFINITIONS
+
+OPEN: Claim received and logged in the system. Adjuster assigned. Initial review pending.
+
+IN_REVIEW: Adjuster is actively reviewing the claim. Property inspection may be scheduled. Evidence being gathered.
+
+WORK_ORDER_ISSUED: Adjuster has reviewed the claim and issued a work order to an assigned contractor. Repair work is authorized to begin.
+
+REPAIR_IN_PROGRESS: Contractor has begun repair work on the property. Work order is active.
+
+INVOICE_SUBMITTED: Contractor has submitted an invoice for completed work. Adjuster review of invoice is pending.
+
+CLOSED: Claim fully resolved. All work completed and invoices paid.
+
+EVIDENCE REQUIREMENTS
+
+Claimants must submit photographic or video evidence of:
+- Exterior damage (roof, walls, foundation)
+- Interior damage (ceilings, floors, structural elements)
+- Personal property damage (if applicable)
+- Pre-loss condition documentation (if available)
+
+Evidence must be submitted within 30 days of the loss event.
+
+WORK ORDER PROCESS
+
+1. Adjuster reviews claim and selects a licensed contractor from the Verisk network.
+2. Work order is created specifying scope of repairs.
+3. Contractor acknowledges and begins work.
+4. Contractor provides status updates at minimum weekly.
+5. Upon completion, contractor submits invoice for adjuster review.
+6. Adjuster approves or disputes invoice within 5 business days.
+
+INVOICE GUIDELINES
+
+Invoices must include:
+- Itemized list of all materials
+- Labor hours and rates
+- Subcontractor costs (if applicable)
+- Work order reference number
+- Completion date
+
+Invoices submitted without proper documentation will be returned for correction.
+
+DISPUTE RESOLUTION
+
+If a claimant disputes the repair scope or estimate, they may request a second adjuster review within 15 days of work order issuance. All disputes are escalated to a Senior Adjuster.

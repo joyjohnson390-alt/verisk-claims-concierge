@@ -1,0 +1,46 @@
+VERISK PROPERTY ESTIMATING NETWORK — CONTRACTOR GUIDELINES
+
+NETWORK REQUIREMENTS
+
+All contractors in the Verisk PEN must maintain:
+- Active state contractor license (verified against license database)
+- General liability insurance minimum $1M per occurrence
+- Workers' compensation coverage for all employees
+- Verisk contractor certification (renewed annually)
+
+WORK ORDER ACCEPTANCE
+
+Upon receiving a work order assignment:
+1. Acknowledge the work order within 24 hours.
+2. Contact the claimant within 48 hours to schedule initial site visit.
+3. Confirm site visit date and time with adjuster via the portal.
+
+STATUS UPDATE REQUIREMENTS
+
+Contractors must submit status updates:
+- Within 24 hours of beginning work
+- Weekly throughout the repair period
+- Immediately upon encountering scope changes or unexpected damage
+
+SCOPE CHANGES
+
+If you discover damage beyond the original work order scope:
+1. Stop non-emergency work on the expanded scope.
+2. Document with photos and written description.
+3. Submit a scope change request through the portal.
+4. Do NOT proceed with additional repairs until adjuster approves the scope change.
+
+Unauthorized work outside the approved scope will not be reimbursed.
+
+INVOICE SUBMISSION
+
+Invoices must be submitted within 10 business days of work completion.
+Required documentation:
+- Signed completion certificate from claimant
+- Itemized material receipts
+- Labor log with hours and rates
+- Before/after photographs
+
+ACCULYNX INTEGRATION
+
+Estimates created in AccuLynx are automatically synced to the Verisk PEN within 4 hours. Contractors using AccuLynx for estimates do not need to re-enter data in the portal — the systems are integrated.
