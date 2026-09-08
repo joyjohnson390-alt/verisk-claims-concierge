@@ -242,3 +242,85 @@ def run_demo_scenario(n: int):
         "user_id": _session["user_id"],
         "persona_name": PERSONA_DEFAULTS[scenario["persona"]]["name"],
     }
+
+
+# ---------------------------------------------------------------------------
+# External API — callable from Salesforce via Named Credentials
+# ---------------------------------------------------------------------------
+
+class AskRequest(BaseModel):
+    question: str
+    property_address: Optional[str] = None
+    lat: Optional[float] = None
+    lon: Optional[float] = None
+    persona: Optional[str] = "adjuster"   # default: adjuster has broadest access
+    user_id: Optional[str] = "ADJ-001"
+
+class AskResponse(BaseModel):
+    answer: str
+    sources: list
+    weather_available: bool
+    property_address: Optional[str] = None
+
+@app.post("/api/ask", response_model=AskResponse)
+def ask(req: AskRequest):
+    """
+    Headless endpoint for Salesforce / external callers.
+    Accepts a natural language question + optional property context.
+    Returns a grounded answer with source attribution.
+    """
+    # Build a context-enriched question
+    question = req.question
+    if req.property_address:
+        question = f"{question}\nProperty address for context: {req.property_address}"
+    if req.lat and req.lon:
+        question = f"{question}\nCoordinates: lat={req.lat}, lon={req.lon}"
+
+    # Run through the agent using adjuster persona (broadest read access)
+    ask_session = {
+        "persona": req.persona or "adjuster",
+        "user_id": req.user_id or "ADJ-001",
+        "messages": [],
+        "claim_id": "",
+        "claim_data": {},
+        "weather_data": {},
+        "estimate_data": {},
+        "weather_available": True,
+        "write_payload": {},
+        "awaiting_confirmation": False,
+        "error_message": "",
+        "intent": "",
+    }
+
+    from langchain_core.messages import HumanMessage
+    from agent.graph import run_turn
+
+    ask_session["messages"] = [HumanMessage(content=question)]
+    try:
+        result = run_turn(ask_session)
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc))
+
+    # Extract reply
+    answer = ""
+    for msg in reversed(result.get("messages", [])):
+        msg_type = getattr(msg, "type", "") or getattr(msg, "role", "")
+        content = getattr(msg, "content", "")
+        if msg_type in ("ai", "assistant") and content:
+            answer = content if isinstance(content, str) else str(content)
+            break
+
+    sources = []
+    if result.get("claim_data"):
+        sources.append("Data 360 (PES + AccuLynx)")
+    if result.get("weather_data") and result.get("weather_available"):
+        sources.append("NOAA Weather Feed")
+    if result.get("estimate_data") and "error" not in result.get("estimate_data", {}):
+        sources.append("AccuLynx Estimates")
+
+    return AskResponse(
+        answer=answer or "No answer generated.",
+        sources=sources,
+        weather_available=result.get("weather_available", True),
+        property_address=req.property_address,
+    )
