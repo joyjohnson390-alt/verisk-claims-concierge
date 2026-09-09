@@ -8,6 +8,7 @@
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
   *{box-sizing:border-box;margin:0;padding:0;}
+  body.did-hidden .didagent__fabio{visibility:hidden!important;pointer-events:none!important;}
 
   body{
     font-family:'Inter',sans-serif;
@@ -133,7 +134,7 @@
   #hint{position:fixed;bottom:64px;right:24px;font-size:11px;color:#334155;pointer-events:none;}
 </style>
 </head>
-<body>
+<body class="did-hidden">
 
 <div id="deck">
 
@@ -713,23 +714,8 @@ Input → classify_intent<br/>
     document.getElementById('nextBtn').disabled = cur === total - 1;
     document.getElementById('pfill').style.width = ((cur + 1) / total * 100) + '%';
 
-    const agentEl = document.querySelector('.didagent__fabio');
-    if (agentEl) {
-      agentEl.style.visibility = cur >= 3 ? 'visible' : 'hidden';
-      agentEl.style.pointerEvents = cur >= 3 ? '' : 'none';
-    }
+    document.body.classList.toggle('did-hidden', cur < 3);
   }
-
-  window.addEventListener('load', () => {
-    const poll = setInterval(() => {
-      const agentEl = document.querySelector('.didagent__fabio');
-      if (agentEl) {
-        agentEl.style.visibility = cur >= 3 ? 'visible' : 'hidden';
-        agentEl.style.pointerEvents = cur >= 3 ? '' : 'none';
-        clearInterval(poll);
-      }
-    }, 300);
-  });
 
   document.addEventListener('keydown', e => {
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown') go(1);
