@@ -713,11 +713,6 @@ Input → classify_intent<br/>
     document.getElementById('nextBtn').disabled = cur === total - 1;
     document.getElementById('pfill').style.width = ((cur + 1) / total * 100) + '%';
 
-    // Show D-ID agent from slide 4 onwards (index 3+), hide on slides 1-3
-    const agentEl = document.querySelector('did-agent');
-    if (agentEl) {
-      agentEl.style.display = cur >= 3 ? '' : 'none';
-    }
   }
 
   document.addEventListener('keydown', e => {
@@ -732,21 +727,11 @@ Input → classify_intent<br/>
     if (Math.abs(dx) > 50) go(dx > 0 ? 1 : -1);
   });
 
-  // Hide agent on first load until slide 4 is reached
-  window.addEventListener('load', () => {
-    const poll = setInterval(() => {
-      const agentEl = document.querySelector('did-agent');
-      if (agentEl) {
-        agentEl.style.display = cur >= 3 ? '' : 'none';
-        clearInterval(poll);
-      }
-    }, 300);
-  });
 
   update();
 </script>
 
-<!-- D-ID AI Agent — visible from slide 4 onward -->
+<!-- D-ID AI Agent -->
 <script type="module"
   src="https://agent.d-id.com/v2/index.js"
   data-mode="fabio"
