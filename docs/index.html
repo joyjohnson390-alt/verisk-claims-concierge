@@ -714,14 +714,18 @@ Input → classify_intent<br/>
     document.getElementById('pfill').style.width = ((cur + 1) / total * 100) + '%';
 
     const agentEl = document.querySelector('.didagent__fabio');
-    if (agentEl) agentEl.style.display = cur >= 3 ? '' : 'none';
+    if (agentEl) {
+      agentEl.style.visibility = cur >= 3 ? 'visible' : 'hidden';
+      agentEl.style.pointerEvents = cur >= 3 ? '' : 'none';
+    }
   }
 
   window.addEventListener('load', () => {
     const poll = setInterval(() => {
       const agentEl = document.querySelector('.didagent__fabio');
       if (agentEl) {
-        agentEl.style.display = cur >= 3 ? '' : 'none';
+        agentEl.style.visibility = cur >= 3 ? 'visible' : 'hidden';
+        agentEl.style.pointerEvents = cur >= 3 ? '' : 'none';
         clearInterval(poll);
       }
     }, 300);
