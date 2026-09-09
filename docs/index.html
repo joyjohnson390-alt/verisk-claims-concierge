@@ -713,13 +713,13 @@ Input → classify_intent<br/>
     document.getElementById('nextBtn').disabled = cur === total - 1;
     document.getElementById('pfill').style.width = ((cur + 1) / total * 100) + '%';
 
-    const agentEl = document.querySelector('did-agent');
+    const agentEl = document.querySelector('.didagent__fabio');
     if (agentEl) agentEl.style.display = cur >= 3 ? '' : 'none';
   }
 
   window.addEventListener('load', () => {
     const poll = setInterval(() => {
-      const agentEl = document.querySelector('did-agent');
+      const agentEl = document.querySelector('.didagent__fabio');
       if (agentEl) {
         agentEl.style.display = cur >= 3 ? '' : 'none';
         clearInterval(poll);
@@ -749,7 +749,7 @@ Input → classify_intent<br/>
   data-mode="fabio"
   data-client-key="ck_E15mx-4-mNwmlJE8SV7mY"
   data-agent-id="v2_agt_Utse5i2t"
-  data-name="did-agent"
+  data-name=".didagent__fabio"
   data-monitor="true"
   data-orientation="horizontal"
   data-position="right"
