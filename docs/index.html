@@ -35,7 +35,7 @@
   #nav{
     display:flex;align-items:center;justify-content:space-between;
     padding:12px 32px;background:#0a0e1a;border-top:1px solid #1e2d4a;
-    flex-shrink:0;
+    flex-shrink:0;position:relative;z-index:9999;
   }
   .nav-btn{
     background:#1e2535;color:#94a3b8;border:1px solid #2d3748;
@@ -714,7 +714,7 @@ Input → classify_intent<br/>
     document.getElementById('pfill').style.width = ((cur + 1) / total * 100) + '%';
 
     // Show D-ID agent from slide 4 onwards (index 3+), hide on slides 1-3
-    const agentEl = document.querySelector('[data-name="did-agent"]');
+    const agentEl = document.querySelector('did-agent');
     if (agentEl) {
       agentEl.style.display = cur >= 3 ? '' : 'none';
     }
@@ -735,7 +735,7 @@ Input → classify_intent<br/>
   // Hide agent on first load until slide 4 is reached
   window.addEventListener('load', () => {
     const poll = setInterval(() => {
-      const agentEl = document.querySelector('[data-name="did-agent"]');
+      const agentEl = document.querySelector('did-agent');
       if (agentEl) {
         agentEl.style.display = cur >= 3 ? '' : 'none';
         clearInterval(poll);
