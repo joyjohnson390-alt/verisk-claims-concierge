@@ -8,7 +8,6 @@
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
 
   *{box-sizing:border-box;margin:0;padding:0;}
-  body.did-hidden .didagent__fabio{visibility:hidden!important;pointer-events:none!important;}
 
   body{
     font-family:'Inter',sans-serif;
@@ -134,7 +133,7 @@
   #hint{position:fixed;bottom:64px;right:24px;font-size:11px;color:#334155;pointer-events:none;}
 </style>
 </head>
-<body class="did-hidden">
+<body>
 
 <div id="deck">
 
@@ -617,6 +616,27 @@ Input → classify_intent<br/>
   const slides = document.querySelectorAll('.slide');
   const total = slides.length;
   let cur = 0;
+  let didEl = null;
+
+  function setDidVisibility() {
+    if (!didEl) return;
+    didEl.style.visibility = cur >= 3 ? 'visible' : 'hidden';
+    didEl.style.pointerEvents = cur >= 3 ? '' : 'none';
+  }
+
+  // Watch for D-ID to append its widget to body
+  const didObserver = new MutationObserver(() => {
+    const known = new Set(['deck','nav','hint']);
+    const el = [...document.body.children].find(
+      c => !known.has(c.id) && c.tagName !== 'SCRIPT' && c.tagName !== 'STYLE'
+    );
+    if (el) {
+      didEl = el;
+      didObserver.disconnect();
+      setDidVisibility();
+    }
+  });
+  didObserver.observe(document.body, { childList: true });
 
   function go(dir) {
     slides[cur].classList.remove('active');
@@ -630,8 +650,7 @@ Input → classify_intent<br/>
     document.getElementById('prevBtn').disabled = cur === 0;
     document.getElementById('nextBtn').disabled = cur === total - 1;
     document.getElementById('pfill').style.width = ((cur + 1) / total * 100) + '%';
-
-    document.body.classList.toggle('did-hidden', cur < 3);
+    setDidVisibility();
   }
 
   document.addEventListener('keydown', e => {
