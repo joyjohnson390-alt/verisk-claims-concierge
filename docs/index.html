@@ -713,7 +713,19 @@ Input → classify_intent<br/>
     document.getElementById('nextBtn').disabled = cur === total - 1;
     document.getElementById('pfill').style.width = ((cur + 1) / total * 100) + '%';
 
+    const agentEl = document.querySelector('did-agent');
+    if (agentEl) agentEl.style.display = cur >= 3 ? '' : 'none';
   }
+
+  window.addEventListener('load', () => {
+    const poll = setInterval(() => {
+      const agentEl = document.querySelector('did-agent');
+      if (agentEl) {
+        agentEl.style.display = cur >= 3 ? '' : 'none';
+        clearInterval(poll);
+      }
+    }, 300);
+  });
 
   document.addEventListener('keydown', e => {
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown') go(1);
